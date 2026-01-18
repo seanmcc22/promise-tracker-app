@@ -72,7 +72,7 @@ function Login({ setView }) {
     <div className="auth-container">
       <div className="auth-box">
         <h1>Welcome Back</h1>
-        <p className="subtitle">Sign in to your PromiseTracker account</p>
+        <p className="subtitle">Sign in to your SanityDashboard account</p>
 
         {error && <div className="error-message">{error}</div>}
 
@@ -343,7 +343,7 @@ function Dashboard({ session }) {
       {/* Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          <h2>PromiseTracker</h2>
+          <h2>SanityDashboard</h2>
         </div>
         <nav className="sidebar-nav">
           <button className="nav-item active">
