@@ -91,6 +91,43 @@ const triggerConfetti = () => {
   }, 250);
 };
 
+// CSV Export function
+const exportToCSV = (data, filename) => {
+  if (data.length === 0) {
+    alert('No data to export');
+    return;
+  }
+
+  // Get headers from first object
+  const headers = Object.keys(data[0]);
+  
+  // Create CSV content
+  const csvContent = [
+    headers.join(','), // Header row
+    ...data.map(row => 
+      headers.map(header => {
+        const value = row[header] || '';
+        // Escape quotes and wrap in quotes if contains comma
+        const escaped = String(value).replace(/"/g, '""');
+        return escaped.includes(',') ? `"${escaped}"` : escaped;
+      }).join(',')
+    )
+  ].join('\n');
+
+  // Create download link
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
 
 // Login Component
 function Login({ setView }) {
@@ -437,9 +474,18 @@ function PromisesTab({ session }) {
     <>
       <div className="content-header">
         <h1>Your Promises</h1>
-        <button onClick={() => openModal()} className="primary-button">
-          + Add Promise
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            onClick={() => exportToCSV(promises, 'promises.csv')} 
+            className="secondary-button"
+            disabled={promises.length === 0}
+          >
+            Export CSV
+          </button>
+          <button onClick={() => openModal()} className="primary-button">
+            + Add Promise
+          </button>
+        </div>
       </div>
 
       <div className="filters">
@@ -668,9 +714,18 @@ function DecisionsTab({ session }) {
     <>
       <div className="content-header">
         <h1>Your Decisions</h1>
-        <button onClick={() => openModal()} className="primary-button">
-          + Add Decision
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            onClick={() => exportToCSV(promises, 'decisions.csv')} 
+            className="secondary-button"
+            disabled={decisions.length === 0}
+          >
+            Export CSV
+          </button>
+          <button onClick={() => openModal()} className="primary-button">
+            + Add Decision
+          </button>
+        </div>
       </div>
 
       <div className="filters">
@@ -869,9 +924,18 @@ function ExceptionsTab({ session }) {
     <>
       <div className="content-header">
         <h1>Your Exceptions</h1>
-        <button onClick={() => openModal()} className="primary-button">
-          + Add Exception
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            onClick={() => exportToCSV(promises, 'exceptions.csv')} 
+            className="secondary-button"
+            disabled={exceptions.length === 0}
+          >
+            Export CSV
+          </button>
+          <button onClick={() => openModal()} className="primary-button">
+            + Add Exception
+          </button>
+        </div>
       </div>
 
       <div className="filters">
