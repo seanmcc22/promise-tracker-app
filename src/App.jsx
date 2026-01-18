@@ -716,7 +716,7 @@ function DecisionsTab({ session }) {
         <h1>Your Decisions</h1>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button 
-            onClick={() => exportToCSV(promises, 'decisions.csv')} 
+            onClick={() => exportToCSV(decisions, 'decisions.csv')} 
             className="secondary-button"
             disabled={decisions.length === 0}
           >
@@ -926,7 +926,7 @@ function ExceptionsTab({ session }) {
         <h1>Your Exceptions</h1>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button 
-            onClick={() => exportToCSV(promises, 'exceptions.csv')} 
+            onClick={() => exportToCSV(exceptions, 'exceptions.csv')} 
             className="secondary-button"
             disabled={exceptions.length === 0}
           >
