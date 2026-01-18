@@ -596,9 +596,9 @@ function DecisionsTab({ session }) {
 
   const [formData, setFormData] = useState({
     title: '',
-    choice: '',
+    options_considered: '',
+    choice_made: '',
     reasoning: '',
-    tags: '',
   })
 
   const fetchData = async () => {
@@ -622,13 +622,13 @@ function DecisionsTab({ session }) {
       setEditingItem(item)
       setFormData({
         title: item.title,
-        choice: item.choice,
+        options_considered: item.options_considered || '',
+        choice_made: item.choice_made,
         reasoning: item.reasoning || '',
-        tags: item.tags || '',
       })
     } else {
       setEditingItem(null)
-      setFormData({ title: '', choice: '', reasoning: '', tags: '' })
+      setFormData({ title: '', options_considered: '', choice_made: '', reasoning: '' })
     }
     setShowModal(true)
   }
@@ -659,8 +659,9 @@ function DecisionsTab({ session }) {
 
   const filteredData = decisions.filter((item) =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.choice.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (item.tags && item.tags.toLowerCase().includes(searchQuery.toLowerCase()))
+    item.choice_made.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (item.options_considered && item.options_considered.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (item.reasoning && item.reasoning.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   return (
@@ -694,9 +695,9 @@ function DecisionsTab({ session }) {
             <thead>
               <tr>
                 <th>Title</th>
+                <th>Options Considered</th>
                 <th>Choice Made</th>
                 <th>Reasoning</th>
-                <th>Tags</th>
                 <th>Date</th>
                 <th>Actions</th>
               </tr>
@@ -705,9 +706,9 @@ function DecisionsTab({ session }) {
               {filteredData.map((item) => (
                 <tr key={item.id}>
                   <td><strong>{item.title}</strong></td>
-                  <td>{item.choice}</td>
+                  <td>{item.options_considered || '—'}</td>
+                  <td><strong>{item.choice_made}</strong></td>
                   <td>{item.reasoning || '—'}</td>
-                  <td>{item.tags || '—'}</td>
                   <td>{new Date(item.date_created).toLocaleDateString()}</td>
                   <td className="actions">
                     <button onClick={() => openModal(item)} className="action-button edit">
@@ -739,35 +740,35 @@ function DecisionsTab({ session }) {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   required
-                  placeholder="e.g., Which framework to use"
+                  placeholder="e.g., Hosting Provider"
+                />
+              </div>
+              <div className="form-group">
+                <label>Options Considered</label>
+                <input
+                  type="text"
+                  value={formData.options_considered}
+                  onChange={(e) => setFormData({ ...formData, options_considered: e.target.value })}
+                  required
+                  placeholder="e.g., Vercel, AWS, DigitalOcean"
                 />
               </div>
               <div className="form-group">
                 <label>Choice Made *</label>
-                <input
-                  type="text"
-                  value={formData.choice}
-                  onChange={(e) => setFormData({ ...formData, choice: e.target.value })}
-                  required
-                  placeholder="e.g., React"
+                <textarea
+                  value={formData.choice_made}
+                  onChange={(e) => setFormData({ ...formData, choice_made: e.target.value })}
+                  placeholder="e.g., Vercel"
                 />
               </div>
               <div className="form-group">
                 <label>Reasoning</label>
-                <textarea
-                  value={formData.reasoning}
-                  onChange={(e) => setFormData({ ...formData, reasoning: e.target.value })}
-                  placeholder="Why did you make this choice?"
-                  rows="3"
-                />
-              </div>
-              <div className="form-group">
-                <label>Tags (comma-separated)</label>
                 <input
                   type="text"
-                  value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                  placeholder="e.g., tech, product"
+                  value={formData.reasoning}
+                  onChange={(e) => setFormData({ ...formData, reasoning: e.target.value })}
+                  placeholder="Why did you make this choice? e.g., Fast deployment, great DX"
+                  rows="3"
                 />
               </div>
               <div className="modal-actions">
@@ -797,7 +798,8 @@ function ExceptionsTab({ session }) {
   const [formData, setFormData] = useState({
     type: '',
     who: '',
-    details: '',
+    reason: '',
+    notes: '',
   })
 
   const fetchData = async () => {
@@ -822,11 +824,12 @@ function ExceptionsTab({ session }) {
       setFormData({
         type: item.type,
         who: item.who,
-        details: item.details || '',
+        reason: item.reason || '',
+        notes: item.notes || '',
       })
     } else {
       setEditingItem(null)
-      setFormData({ type: '', who: '', details: '' })
+      setFormData({ type: '', who: '', reason: '', notes: '' })
     }
     setShowModal(true)
   }
@@ -858,7 +861,8 @@ function ExceptionsTab({ session }) {
   const filteredData = exceptions.filter((item) =>
     item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.who.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (item.details && item.details.toLowerCase().includes(searchQuery.toLowerCase()))
+    (item.reason && item.reason.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (item.notes && item.notes.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   return (
@@ -893,7 +897,8 @@ function ExceptionsTab({ session }) {
               <tr>
                 <th>Type</th>
                 <th>Who</th>
-                <th>Details</th>
+                <th>Reason</th>
+                <th>Notes</th>
                 <th>Date</th>
                 <th>Actions</th>
               </tr>
@@ -903,7 +908,8 @@ function ExceptionsTab({ session }) {
                 <tr key={item.id}>
                   <td><strong>{item.type}</strong></td>
                   <td>{item.who}</td>
-                  <td>{item.details || '—'}</td>
+                  <td>{item.reason || '—'}</td>
+                  <td>{item.notes || '—'}</td>
                   <td>{new Date(item.date_created).toLocaleDateString()}</td>
                   <td className="actions">
                     <button onClick={() => openModal(item)} className="action-button edit">
@@ -949,11 +955,19 @@ function ExceptionsTab({ session }) {
                 />
               </div>
               <div className="form-group">
-                <label>Details</label>
+                <label>Reason</label>
                 <textarea
-                  value={formData.details}
-                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder="Additional context..."
+                  value={formData.reason}
+                  onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                  placeholder="e.g., Early adopter discount, Beta partner"
+                />
+                </div>
+              <div className="form-group">
+                <label>Notes</label>
+                <textarea
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="e.g., First 3 months free then 40% off"
                   rows="3"
                 />
               </div>
