@@ -43,6 +43,55 @@ function App() {
   return <Dashboard session={session} />
 }
 
+// Simple confetti function
+const triggerConfetti = () => {
+  const duration = 2 * 1000;
+  const animationEnd = Date.now() + duration;
+  const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+  function randomInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  const interval = setInterval(function() {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+    
+    // Create confetti elements
+    for (let i = 0; i < particleCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.style.position = 'fixed';
+      confetti.style.width = '10px';
+      confetti.style.height = '10px';
+      confetti.style.backgroundColor = ['#667eea', '#764ba2', '#f093fb', '#4facfe'][Math.floor(Math.random() * 4)];
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-10px';
+      confetti.style.opacity = '1';
+      confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+      confetti.style.transition = 'all 2s ease-out';
+      confetti.style.zIndex = '9999';
+      
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => {
+        confetti.style.top = window.innerHeight + 'px';
+        confetti.style.opacity = '0';
+        confetti.style.transform = 'rotate(' + (Math.random() * 720) + 'deg)';
+      }, 10);
+      
+      setTimeout(() => {
+        confetti.remove();
+      }, 2000);
+    }
+  }, 250);
+};
+
+
 // Login Component
 function Login({ setView }) {
   const [email, setEmail] = useState('')
@@ -352,6 +401,9 @@ function PromisesTab({ session }) {
       reminder_date: formData.reminder_date || null,
     }
 
+    // Check if marked as shipped
+    const wasShipped = editingItem && editingItem.status !== 'Shipped' && formData.status == 'Shipped';
+
     if (editingItem) {
       await supabase.from('feature_promises').update(itemData).eq('id', editingItem.id)
     } else {
@@ -359,6 +411,11 @@ function PromisesTab({ session }) {
     }
     fetchData()
     closeModal()
+
+    // Trigger Confetti on Shipping
+    if (wasShipped) {
+      setTimeout(() => triggerConfetti(), 100);
+    }
   }
 
   const deleteItem = async (id) => {
