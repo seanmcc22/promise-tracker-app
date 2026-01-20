@@ -317,8 +317,13 @@ function Dashboard({ session }) {
           <div className="user-info">
             <p>{session.user.email}</p>
           </div>
+          <div style={{ fontSize: '11px', marginBottom: '12px', color: '#9ca3af' }}>
+            <a href="https://sanitydashboard.com/privacy.html" target="_blank" rel="noopener noreferrer" style={{ marginRight: '12px' }}>Privacy</a>
+            <a href="https://sanitydashboard.com/terms.html" target="_blank" rel="noopener noreferrer" style={{ marginRight: '12px' }}>Terms</a>
+            <a href="https://sanitydashboard.com/contact.html" target="_blank" rel="noopener noreferrer">Contact</a>
+          </div>
           <button onClick={handleLogout} className="logout-button">
-            Logout
+           Logout
           </button>
         </div>
       </aside>
